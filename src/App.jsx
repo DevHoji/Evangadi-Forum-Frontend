@@ -1,7 +1,7 @@
 // src/App.jsx
 import React from "react";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, createContext } from "react";
