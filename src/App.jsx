@@ -3,6 +3,8 @@ import React from "react";
 import Home from "./pages/Home";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
+import NewQuestion from "./pages/NewQuestion";
+import Detail from "./pages/Detail"; // Import the Detail component
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, createContext } from "react";
 import axios from "./axiosConfig";
@@ -47,6 +49,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/new-question" element={<NewQuestion />} />
+          <Route path="/question/:id" element={<Detail />} />{" "}
+          {/* Add the route for Detail */}
         </Routes>
       </div>
       {showFooter && <Footer />}
