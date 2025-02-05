@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, TextField, TextareaAutosize, Alert } from "@mui/material";
-import axiosBase from "../axiosConfig"; // Make sure you import your axios config
+import axiosBase from "../axiosConfig";
 
 const NewQuestion = () => {
   const [title, setTitle] = useState("");
@@ -19,13 +20,12 @@ const NewQuestion = () => {
     }
 
     try {
-      // Send the data to your backend
       await axiosBase.post(
         "/questions",
         {
           title: title,
           description: description,
-          tag: "user_defined", // You can make this dynamic later
+          tag: "user_defined", 
         },
         {
           headers: {
@@ -52,7 +52,7 @@ const NewQuestion = () => {
       </h1>
       <div className="text-center">
         <ul
-          className="list-disc pl-5 inline-block text-left" // Converted inline styles to Tailwind classes
+          className="list-disc pl-5 inline-block text-left" 
         >
           <li>Summarize your problem in a one-line title.</li>
           <li>Describe your problem in more detail.</li>
@@ -80,7 +80,7 @@ const NewQuestion = () => {
           variant="outlined"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          inputProps={{ maxLength: 50 }} // Apply maxLength restriction
+          inputProps={{ maxLength: 50 }} 
         />
         <TextareaAutosize
           placeholder="Question Description (max 200 characters)"
@@ -88,14 +88,14 @@ const NewQuestion = () => {
           className="w-full mt-4 p-2 border border-black rounded" // Converted inline styles to Tailwind classes
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          maxLength={200} // Apply maxLength restriction
+          maxLength={200} 
         />
 
         <Button
           type="submit"
           variant="contained"
           color="primary"
-          className="mt-4 rounded-full" // Converted inline styles to Tailwind classes
+          className="mt-4 rounded-full" 
         >
           Post Your Question
         </Button>

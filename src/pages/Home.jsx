@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import axiosBase from "../axiosConfig"; // Import your Axios instance
-import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
-import { Button, Avatar, TextField } from "@mui/material"; // Import Material-UI components
+import axiosBase from "../axiosConfig"; 
+import { Link, useNavigate } from "react-router-dom"; 
+import { Button, Avatar, TextField } from "@mui/material"; 
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 const Home = () => {

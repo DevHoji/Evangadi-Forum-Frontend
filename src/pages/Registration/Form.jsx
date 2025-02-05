@@ -1,8 +1,9 @@
-// src/pages/Registration/Form.jsx
+/* eslint-disable no-unused-vars */
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import PropTypes from "prop-types"; 
 
 const Form = ({ onSubmit }) => {
   const emailDom = useRef();
@@ -130,6 +131,9 @@ const Form = ({ onSubmit }) => {
       </form>
     </div>
   );
+};
+Form.propTypes = {
+  onSubmit: PropTypes.func.isRequired, 
 };
 
 export default Form;

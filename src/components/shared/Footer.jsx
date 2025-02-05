@@ -1,23 +1,15 @@
-// src/components/Footer.jsx
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { Link } from "react-router-dom";
 import { Stack, IconButton } from "@mui/material";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaTiktok,
-  FaLinkedin,
-} from "react-icons/fa";
-
-import logo from "../../assets/evangadi-logo-f.png"
+import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
+import logo from "../../assets/evangadi-logo-f.png";
 
 const Footer = () => {
   return (
     <footer className="bg-[#3A4559] text-white py-8 mt-16">
       <div className="container mx-auto px-4">
         <div className="md:flex md:justify-between md:items-start md:text-left">
-          {/* Logo and Social Icons */}
           <div className="mb-6 md:mb-0 md:text-left">
             <div className="mb-4">
               <img src={logo} alt="Evangadi Logo" className="h-10 md:h-12" />
@@ -41,8 +33,6 @@ const Footer = () => {
               </IconButton>
             </Stack>
           </div>
-
-          {/* Useful Links */}
           <div className="mb-6 md:mb-0 text-center md:text-left">
             <h4 className="text-lg font-semibold mb-4">Useful Links</h4>
             <ul className="space-y-2">
@@ -64,7 +54,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Info */}
           <div className="text-center md:text-left">
             <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
             <address className="space-y-2">

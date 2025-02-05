@@ -1,4 +1,4 @@
-// src/pages/Registration/Register.jsx
+/* eslint-disable no-unused-vars */
 import React from "react";
 import axios from "../../axiosConfig";
 import { useNavigate } from "react-router-dom";

@@ -1,24 +1,32 @@
 // src/App.jsx
+/* eslint-disable no-unused-vars */
 import React from "react";
 import Home from "./pages/Home";
-import Login from "./pages/Login/Login";
+import Login from "./pages/Login/Login"; 
 import Register from "./pages/Registration/Register";
 import NewQuestion from "./pages/NewQuestion";
-import Detail from "./pages/Detail"; // Import the Detail component
-import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import Detail from "./pages/Detail";
+import {
+  Route,
+  Routes,
+  useNavigate,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 import { useEffect, useState, createContext } from "react";
 import axios from "./axiosConfig";
-import Navbar from "./components/shared/Navbar";
+import Navbar from "./components/shared/navbar";
 import Footer from "./components/shared/Footer";
 
 export const Appstate = createContext();
 
 function App() {
-  const [user, setuser] = useState({});
+  const [user, setuser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const location = useLocation(); // Get current location
+  const location = useLocation();
 
   const showFooter =
     location.pathname === "/login" || location.pathname === "/register";
@@ -31,9 +39,16 @@ function App() {
         },
       });
       setuser(data);
+      setIsLoggedIn(true);
+      if (location.pathname === "/login") {
+        navigate("/");
+      }
     } catch (error) {
       console.log(error.response);
-      navigate("/login");
+      setIsLoggedIn(false);
+      if (location.pathname !== "/login" && location.pathname !== "/register") {
+        navigate("/login");
+      }
     }
   }
 
@@ -41,17 +56,59 @@ function App() {
     checkUser();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await axios.delete("/users/delete", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      localStorage.removeItem("token");
+      setuser(null);
+      setIsLoggedIn(false);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    checkUser();
+  };
+
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
+
   return (
     <Appstate.Provider value={{ user, setuser }}>
-      <Navbar />
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
+        showAuth={!isAuthPage}
+      />
       <div id="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/"
+            element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/login"
+            element={<Login onLoginSuccess={handleLoginSuccess} />}
+          />
           <Route path="/register" element={<Register />} />
-          <Route path="/new-question" element={<NewQuestion />} />
-          <Route path="/question/:id" element={<Detail />} />{" "}
-          {/* Add the route for Detail */}
+          <Route
+            path="/new-question"
+            element={
+              isLoggedIn ? <NewQuestion /> : <Navigate to="/login" replace />
+            }
+          />
+          <Route
+            path="/question/:id"
+            element={isLoggedIn ? <Detail /> : <Navigate to="/login" replace />}
+          />
         </Routes>
       </div>
       {showFooter && <Footer />}

@@ -1,11 +1,12 @@
-// src/pages/Login/Log.jsx
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef } from "react";
 import { IconButton, InputAdornment, TextField, Button } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axios from "../../axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types"; 
 
-const Log = () => {
+const Log = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
   const emailDom = useRef();
   const passwordDom = useRef();
@@ -31,6 +32,7 @@ const Log = () => {
       });
       alert("Login successful");
       localStorage.setItem("token", data.token);
+      onLoginSuccess(); //Call the onLoginSuccess passed from parent
       navigate("/");
       console.log(data);
     } catch (error) {
@@ -43,7 +45,8 @@ const Log = () => {
     <div className="w-full sm:w-96 md:w-4/5 lg:w-3/4 p-6 bg-white shadow-lg rounded-lg flex flex-col justify-center items-center">
       <h2 className="text-2xl font-semibold mb-4">Login to your account</h2>
       <p className="text-gray-600 mb-6 text-center">
-        Don't have an account?{" "}
+        Don&apos;t have an account?
+{" "}
         <Link to="/register" className="text-orange-500 underline">
           Create new Account
         </Link>
@@ -97,6 +100,9 @@ const Log = () => {
       </p>
     </div>
   );
+};
+Log.propTypes = {
+  onLoginSuccess: PropTypes.bool.isRequired, 
 };
 
 export default Log;

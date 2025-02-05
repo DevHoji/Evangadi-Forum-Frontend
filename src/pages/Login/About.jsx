@@ -1,4 +1,4 @@
-// src/pages/Registration/About.jsx
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { Button } from "@mui/material";
 
