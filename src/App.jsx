@@ -1,8 +1,6 @@
-// src/App.jsx
-/* eslint-disable no-unused-vars */
 import React from "react";
 import Home from "./pages/Home";
-import Login from "./pages/Login/Login"; 
+import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
 import NewQuestion from "./pages/NewQuestion";
 import Detail from "./pages/Detail";
@@ -17,6 +15,7 @@ import { useEffect, useState, createContext } from "react";
 import axios from "./axiosConfig";
 import Navbar from "./components/shared/navbar";
 import Footer from "./components/shared/Footer";
+import { SocketProvider } from "./context/SocketContext"; // Import SocketProvider
 
 export const Appstate = createContext();
 
@@ -83,35 +82,41 @@ function App() {
 
   return (
     <Appstate.Provider value={{ user, setuser }}>
-      <Navbar
-        isLoggedIn={isLoggedIn}
-        onLogout={handleLogout}
-        showAuth={!isAuthPage}
-      />
-      <div id="main-content">
-        <Routes>
-          <Route
-            path="/"
-            element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/login"
-            element={<Login onLoginSuccess={handleLoginSuccess} />}
-          />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/new-question"
-            element={
-              isLoggedIn ? <NewQuestion /> : <Navigate to="/login" replace />
-            }
-          />
-          <Route
-            path="/question/:id"
-            element={isLoggedIn ? <Detail /> : <Navigate to="/login" replace />}
-          />
-        </Routes>
-      </div>
-      {showFooter && <Footer />}
+      <SocketProvider>
+        {" "}
+        {/* Wrap your app with SocketProvider */}
+        <Navbar
+          isLoggedIn={isLoggedIn}
+          onLogout={handleLogout}
+          showAuth={!isAuthPage}
+        />
+        <div id="main-content">
+          <Routes>
+            <Route
+              path="/"
+              element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/login"
+              element={<Login onLoginSuccess={handleLoginSuccess} />}
+            />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/new-question"
+              element={
+                isLoggedIn ? <NewQuestion /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/question/:id"
+              element={
+                isLoggedIn ? <Detail /> : <Navigate to="/login" replace />
+              }
+            />
+          </Routes>
+        </div>
+        {showFooter && <Footer />}
+      </SocketProvider>
     </Appstate.Provider>
   );
 }

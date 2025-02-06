@@ -9,21 +9,22 @@ import {
   Alert,
 } from "@mui/material";
 import axiosBase from "../axiosConfig";
+import { useSocket } from "../context/SocketContext"; // Import useSocket
 
 const Detail = () => {
   const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [answerText, setAnswerText] = useState("");
-  const [searchUsername, setSearchUsername] = useState(""); // State for search input
-  const [filteredAnswers, setFilteredAnswers] = useState([]); // State for filtered answers
-  const [errorMessage, setErrorMessage] = useState(""); // State for error messages
-  const { id } = useParams(); // Get the question ID from the URL
+  const [searchUsername, setSearchUsername] = useState("");
+  const [filteredAnswers, setFilteredAnswers] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { socket } = useSocket(); // Access the socket
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Question Details
         const questionResponse = await axiosBase.get(`/questions/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -31,7 +32,6 @@ const Detail = () => {
         });
         setQuestion(questionResponse.data.question);
 
-        // Fetch Answers for the Question
         const answersResponse = await axiosBase.get(
           `/answers/${questionResponse.data.question.questionid}`,
           {
@@ -41,27 +41,45 @@ const Detail = () => {
           }
         );
         setAnswers(answersResponse.data.answers);
-        setFilteredAnswers(answersResponse.data.answers); // Initialize filtered answers with all answers
+        setFilteredAnswers(answersResponse.data.answers);
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle errors (e.g., redirect to login)
       }
     };
 
     fetchData();
-  }, [id]); // Depend on the id to refetch when the question changes
+  }, [id]);
+
+  useEffect(() => {
+    if (!socket || !question) return; // Only proceed if socket and question are available
+
+    const handleNewAnswer = (answer) => {
+      // Check if the answer belongs to the current question
+      if (answer.questionid === question.questionid) {
+        setAnswers((prevAnswers) => [...prevAnswers, answer]);
+        setFilteredAnswers((prevFilteredAnswers) => [
+          ...prevFilteredAnswers,
+          answer,
+        ]);
+      }
+    };
+
+    socket.on("newAnswer", handleNewAnswer);
+
+    return () => {
+      socket.off("newAnswer", handleNewAnswer);
+    };
+  }, [socket, question]); // Depend on socket and question
 
   const handlePostAnswer = async (e) => {
     e.preventDefault();
 
-    // Validate the input
     if (!answerText) {
       setErrorMessage("Please enter your answer.");
       return;
     }
 
     try {
-      // Post the new answer
       await axiosBase.post(
         "/answers",
         {
@@ -75,25 +93,23 @@ const Detail = () => {
         }
       );
 
-      // Clear the input field
       setAnswerText("");
       setErrorMessage("");
 
-      // Refresh the answers by calling fetchData again.
-      const answersResponse = await axiosBase.get(
-        `/answers/${question.questionid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setAnswers(answersResponse.data.answers);
-      setFilteredAnswers(answersResponse.data.answers);
+      // No need to refresh all answers, the socket will handle the new answer
+      // const answersResponse = await axiosBase.get(
+      //   `/answers/${question.questionid}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //     },
+      //   }
+      // );
+      // setAnswers(answersResponse.data.answers);
+      // setFilteredAnswers(answersResponse.data.answers);
     } catch (error) {
       console.error("Error posting answer:", error);
       setErrorMessage("Error Posting the Answer");
-      // Handle errors (e.g., display an error message)
     }
   };
 
@@ -107,14 +123,12 @@ const Detail = () => {
   };
 
   if (!question) {
-    return <div className="text-center py-4">Loading...</div>; // Or display an error message
+    return <div className="text-center py-4">Loading...</div>;
   }
 
   return (
     <section className="container mx-auto py-8 px-4 sm:px-8">
       <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
-        {" "}
-        {/* Responsive layout */}
         <h2 className="text-2xl font-semibold mb-2">Question</h2>
         <TextField
           label="Search by Username"
@@ -122,7 +136,7 @@ const Detail = () => {
           size="small"
           value={searchUsername}
           onChange={handleSearch}
-          className="mt-2 sm:mt-0" // Added top margin on smaller screens
+          className="mt-2 sm:mt-0"
         />
       </div>
       <h1 className="text-3xl font-bold mb-4">{question.title}</h1>
